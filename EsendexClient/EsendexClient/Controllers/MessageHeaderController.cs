@@ -32,7 +32,7 @@ namespace EsendexClient.Controllers
         [ResponseType(typeof(MessageHeader))]
         public async Task<IHttpActionResult> Get(string id)
         {
-            var restResponse = await GetHeaderAsync(id.ToUpper());
+            var restResponse = await GetHeaderAsync(id);
             if (restResponse.ResponseStatus != ResponseStatus.Completed || restResponse.StatusCode != HttpStatusCode.OK)
             {
                 return InternalServerError();
@@ -60,7 +60,7 @@ namespace EsendexClient.Controllers
         }
 
         [XmlRoot("messageheaders", Namespace = "http://api.esendex.com/ns/")]
-        private class MessageHeadersResponse
+        public class MessageHeadersResponse
         {
             public List<MessageHeader> MessageHeaders { get; set; }
         }
