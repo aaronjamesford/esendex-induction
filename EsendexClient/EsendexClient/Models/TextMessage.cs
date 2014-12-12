@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Security.Policy;
+using System.Xml.Serialization;
 using RestSharp.Deserializers;
 using RestSharp.Serializers;
 
 namespace EsendexClient.Models
 {
+     [XmlRoot("messageheader", Namespace = "http://api.esendex.com/ns/")]
     public class MessageHeader
     {
         public string Id { get; set; }
