@@ -19,31 +19,120 @@ namespace EsendexClient.Controllers
         [ResponseType(typeof (IEnumerable<Conversation>))]
         public async Task<IHttpActionResult> Get()
         {
-            var restResponse = await GetHeadersAsync();
-            if (restResponse.ResponseStatus != ResponseStatus.Completed || restResponse.StatusCode != HttpStatusCode.OK)
+            var outgoingResponse = await GetHeadersAsync();
+            var incomingResponse = await GetInboundHeadersAsync();
+
+            if (outgoingResponse.ResponseStatus != ResponseStatus.Completed || outgoingResponse.StatusCode != HttpStatusCode.OK)
             {
                 return InternalServerError();
             }
 
-            var headers = restResponse.Data.MessageHeaders;
-            var participants = headers.Select(header => header.To.PhoneNumber).Distinct();
+            if (incomingResponse.ResponseStatus != ResponseStatus.Completed || incomingResponse.StatusCode != HttpStatusCode.OK)
+            {
+                return InternalServerError();
+            }
+
+            var headers = outgoingResponse.Data.MessageHeaders
+                .Concat(incomingResponse.Data.MessageHeaders)
+                .Where(header => header.Type == "SMS");
+
+            var participants = headers
+                .Select(GetOtherParty)
+                .Distinct();
 
             var conversations = participants.Select(participant =>
-            {
-                var lastHeader = headers.Where(header => header.To.PhoneNumber == participant).OrderByDescending(header => header.LastStatusAt).First();
-                return new Conversation(lastHeader);
-            }).OrderByDescending(convo => convo.LastMessageAt);
+                {
+                    var lastHeader = headers
+                        .Where(header => GetOtherParty(header) == participant)
+                        .OrderByDescending(GetLastStatus)
+                        .First();
+
+                    return new Conversation(lastHeader);
+                })
+            .OrderByDescending(convo => convo.LastMessageAt);
 
             return Ok(conversations);
         }
 
+        [ResponseType(typeof(IEnumerable<ConversationItem>))]
+        public async Task<IHttpActionResult> Get(string participant)
+        {
+            var outgoingResponse = await GetHeadersAsync(participant);
+            var incomingResponse = await GetInboundHeadersAsync(100);
+
+            if (incomingResponse.ResponseStatus != ResponseStatus.Completed || incomingResponse.StatusCode != HttpStatusCode.OK)
+            {
+                return InternalServerError();
+            }
+
+            if (outgoingResponse.ResponseStatus != ResponseStatus.Completed || outgoingResponse.StatusCode != HttpStatusCode.OK)
+            {
+                return InternalServerError();
+            }
+
+            var headers = outgoingResponse.Data.MessageHeaders
+                .Concat(incomingResponse.Data.MessageHeaders.LimitTo(participant))
+                .Where(header => header.Type == "SMS")
+                .OrderBy(GetLastStatus)
+                .Take(10)
+                .Select(msg => new ConversationItem(msg));
+
+            return Ok(headers);
+        }
+
+        public static DateTime GetLastStatus(MessageHeader header)
+        {
+            return header.Direction == "Inbound" ? header.ReceivedAt : header.LastStatusAt;
+        }
+
+        public static string GetOtherParty(MessageHeader header)
+        {
+            return (header.Direction == "Inbound" ? header.From.PhoneNumber : header.To.PhoneNumber);
+        }
+
         private async Task<IRestResponse<MessageHeaderController.MessageHeadersResponse>> GetHeadersAsync()
         {
-            var client = new RestClient("http://api.dev.esendex.com");
+            var client = new RestClient("http://api.esendex.com");
             var request = new RestRequest("/v1.0/messageheaders", Method.GET);
             request.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_credentials)));
 
             return await client.ExecuteGetTaskAsync<MessageHeaderController.MessageHeadersResponse>(request).ContinueWith(res => res.Result);
+        }
+
+        private async Task<IRestResponse<MessageHeaderController.MessageHeadersResponse>> GetInboundHeadersAsync()
+        {
+            var client = new RestClient("http://api.esendex.com");
+            var request = new RestRequest("/v1.0/inbox/messages", Method.GET);
+            request.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_credentials)));
+
+            return await client.ExecuteGetTaskAsync<MessageHeaderController.MessageHeadersResponse>(request).ContinueWith(res => res.Result);
+        }
+
+        private async Task<IRestResponse<MessageHeaderController.MessageHeadersResponse>> GetHeadersAsync(string participant)
+        {
+            var client = new RestClient("http://api.esendex.com");
+            var request = new RestRequest("/v1.0/messageheaders?to=" + participant, Method.GET);
+            request.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_credentials)));
+
+            return await client.ExecuteGetTaskAsync<MessageHeaderController.MessageHeadersResponse>(request).ContinueWith(res => res.Result);
+        }
+
+
+        private async Task<IRestResponse<MessageHeaderController.MessageHeadersResponse>> GetInboundHeadersAsync(int n)
+        {
+            var client = new RestClient("http://api.esendex.com");
+            var request = new RestRequest("/v1.0/inbox/messages?count=" + n, Method.GET);
+            request.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_credentials)));
+
+            return await client.ExecuteGetTaskAsync<MessageHeaderController.MessageHeadersResponse>(request).ContinueWith(res => res.Result);
+        }
+    }
+
+    public static class CollectionExtensions
+    {
+        public static IEnumerable<MessageHeader> LimitTo(this IEnumerable<MessageHeader> messages, string participant)
+        {
+            return messages.Where(message => ConversationController.GetOtherParty(message) == participant);
         }
     }
 
@@ -51,21 +140,33 @@ namespace EsendexClient.Controllers
     {
         public Conversation(MessageHeader latestMessage)
         {
-            if (latestMessage.Direction == "Inbound")
-            {
-                Participant = latestMessage.From.PhoneNumber;
-            }
-            else
-            {
-                Participant = latestMessage.To.PhoneNumber;
-            }
-
-            LastMessageAt = latestMessage.LastStatusAt;
+            Participant = ConversationController.GetOtherParty(latestMessage);
+            LastMessageAt = ConversationController.GetLastStatus(latestMessage);
             Summary = latestMessage.Summary.Length > 50 ? latestMessage.Summary.Substring(0, 47) + "..." : latestMessage.Summary;
         }
 
         public string Participant { get; set; }
         public string Summary { get; set; }
         public DateTime LastMessageAt { get; set; }
+    }
+
+    public class ConversationItem
+    {
+        public ConversationItem(MessageHeader message)
+        {
+            To = message.To;
+            From = message.From;
+            LastStatusAt = ConversationController.GetLastStatus(message);
+            Summary = message.Summary.Length > 50 ? message.Summary.Substring(0, 47) + "..." : message.Summary;
+            Status = message.Direction == "Inbound" ? "Received" : message.Status;
+            Direction = message.Direction;
+        }
+
+        public string Status { get; set; }
+        public DateTime LastStatusAt { get; set; }
+        public Participant To { get; set; }
+        public Participant From { get; set; }
+        public string Summary { get; set; }
+        public string Direction { get; set; }
     }
 }

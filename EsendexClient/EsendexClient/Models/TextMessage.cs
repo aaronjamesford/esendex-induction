@@ -22,6 +22,8 @@ namespace EsendexClient.Models
 
         public DateTime SubmittedAt { get; set; }
 
+        public DateTime ReceivedAt { get; set; }
+
         public string Type { get; set; }
 
         public Participant To { get; set; }

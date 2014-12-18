@@ -1,0 +1,118 @@
+body {
+    background-color: #D8CEDB;
+    padding: 0;
+}
+
+.main-container {
+    background-color: #efefef;
+    height: 600px;
+    margin-top: 50px;
+    border: solid 1px #d0d0d0;
+}
+
+.sidebar {
+    height: 100%;
+    background-color: #e5e5e5;
+    overflow-x: hidden;
+    border-right: 2px solid #b0b0b0;
+    padding: 0;
+    overflow-y: hidden;
+}
+
+.panel-header {
+    font-weight: bold;
+    line-height: 1em;
+    height: 3em;
+    box-sizing: border-box;
+    padding-top: 1em;
+    background-color: #765285;
+    color: #eeeeee;
+    text-align: center;
+    z-index: 1;
+    position: relative;
+}
+
+.account-dropdown-caret {
+    line-height: 1em;
+    font-size: 1.5em;
+    position: absolute;
+    right: 10px;
+    top: 0.5em;
+}
+
+.message-list li {
+    height: 75px;
+    width: 100%;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #b0b0b0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.message-list li.active {
+    background-color: #e3e3e3;
+}
+
+.message-list li.active a:hover {
+    background-color: #e0e0e0;
+}
+
+.message-list li a {
+    height: 100%;
+    color: #000;
+}
+
+.message-preview {
+    color: #b0b0b0;
+    
+}
+
+.message-panel {
+    padding: 0;
+}
+
+.conversation-panel .row {
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: 10px;
+}
+
+.conversation-panel {
+    border-bottom: 1px solid #b0b0b0;
+    height: 80%;
+    overflow-y: scroll;
+    padding-bottom: 10px;
+}
+
+.message {
+    border: solid 1px #efefef;
+    padding: 15px;
+    min-height: 75px;
+}
+
+.outgoing {
+    background-color: #9767AB;
+    color: #eeeeee;
+}
+
+.incoming {
+    background-color: #BEA7C7;
+}
+
+.message-status {
+    font-style: italic;
+    padding-right: 5px;
+    padding-left: 5px;
+    font-size: 0.8em;
+    color: #909090;
+}
+
+.send-message-panel .row {
+    padding: 5px 0 0 5px;
+}
+
+.send-message-panel .col-sm-4, .send-message-panel .col-sm-8 {
+    padding: 0 5px 0 0;
+    margin: 0;
+}
