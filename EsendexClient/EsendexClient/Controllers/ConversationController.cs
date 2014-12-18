@@ -74,8 +74,7 @@ namespace EsendexClient.Controllers
                 .Concat(incomingResponse.Data.MessageHeaders.LimitTo(participant))
                 .Where(header => header.Type == "SMS")
                 .OrderBy(GetLastStatus)
-                .Take(10)
-                ;//.Select(msg => new ConversationItem(msg));
+                .Take(10);
 
             foreach (var header in headers)
             {
