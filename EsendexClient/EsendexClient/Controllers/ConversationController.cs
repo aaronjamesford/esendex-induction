@@ -75,9 +75,25 @@ namespace EsendexClient.Controllers
                 .Where(header => header.Type == "SMS")
                 .OrderBy(GetLastStatus)
                 .Take(10)
-                .Select(msg => new ConversationItem(msg));
+                ;//.Select(msg => new ConversationItem(msg));
 
-            return Ok(headers);
+            foreach (var header in headers)
+            {
+                var bodyResponse = await GetBodyAsync(header);
+
+                if (bodyResponse.ResponseStatus == ResponseStatus.Completed && bodyResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    header.Body.BodyText = bodyResponse.Data.BodyText;
+                    header.Body.CharacterSet = bodyResponse.Data.CharacterSet;
+                }
+                else
+                {
+                    header.Body.BodyText = header.Summary;
+                    header.Body.CharacterSet = "Auto";
+                }
+            }
+
+            return Ok(headers.Select(msg => new ConversationItem(msg)));
         }
 
         public static DateTime GetLastStatus(MessageHeader header)
@@ -126,6 +142,15 @@ namespace EsendexClient.Controllers
 
             return await client.ExecuteGetTaskAsync<MessageHeaderController.MessageHeadersResponse>(request).ContinueWith(res => res.Result);
         }
+
+        private async Task<IRestResponse<MessageBody>> GetBodyAsync(MessageHeader header)
+        {
+            var client = new RestClient("http://api.esendex.com");
+            var request = new RestRequest("/v1.0/messageheaders/" + header.Id + "/body", Method.GET);
+            request.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_credentials)));
+
+            return await client.ExecuteGetTaskAsync<MessageBody>(request).ContinueWith(res => res.Result);
+        }
     }
 
     public static class CollectionExtensions
@@ -160,6 +185,7 @@ namespace EsendexClient.Controllers
             Summary = message.Summary.Length > 50 ? message.Summary.Substring(0, 47) + "..." : message.Summary;
             Status = message.Direction == "Inbound" ? "Received" : message.Status;
             Direction = message.Direction;
+            Body = message.Body.BodyText;
         }
 
         public string Status { get; set; }
@@ -168,5 +194,6 @@ namespace EsendexClient.Controllers
         public Participant From { get; set; }
         public string Summary { get; set; }
         public string Direction { get; set; }
+        public string Body { get; set; }
     }
 }

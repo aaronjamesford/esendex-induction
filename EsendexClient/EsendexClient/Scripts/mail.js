@@ -1,4 +1,4 @@
-(function () {
+(function() {
     var padNumber = function(n) {
         if (n < 10) {
             return "0" + n;
@@ -11,7 +11,17 @@
         return padNumber(d.getDate()) + "/" + padNumber(d.getMonth() + 1) + "/" + padNumber(d.getFullYear()) + " " + padNumber(d.getHours()) + ":" + padNumber(d.getMinutes());
     }
 
-    var app = angular.module("esendex-mail", []);
+
+    var app = angular.module("esendex-mail", [])
+        .directive("drawConversationDirective", function() {
+            return function(scope) {
+                if (scope.$last) {
+                    $(function() {
+                        $('[data-toggle="tooltip"]').tooltip();
+                    });
+                }
+            }
+        });
     
     app.controller("MailboxController", function($scope, $http) {
         $scope.accountReference = "EX0153074";

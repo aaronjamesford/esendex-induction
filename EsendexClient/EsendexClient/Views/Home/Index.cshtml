@@ -30,11 +30,11 @@
 
                     <div class="panel-header">{{ activeConversation.participant }}</div>
                     <div class="conversation-panel container-fluid">
-                        <div class="row" ng-repeat="message in activeConversation">
+                        <div class="row" ng-repeat="message in activeConversation" draw-conversation-directive>
                             <div class="col-sm-5" ng-class="{ 'col-sm-offset-7' : message.direction == 'Outbound'}">
                                 <div class="message" ng-class="{ 'incoming' : message.direction == 'Inbound', 'outgoing' : message.direction == 'Outbound' }">
-                                    <span class="glyphicon glyphicon-warning-sign" ng-show="message.status == 'Failed'">&nbsp;</span>
-                                    {{ message.summary }}
+                                    <span class="glyphicon glyphicon-warning-sign" data-toggle="tooltip" data-placement="left" title="This message failed to send" ng-show="message.status == 'Failed'">&nbsp;</span>
+                                    {{ message.body }}
                                 </div>
                                 <div class="message-status pull-right">
                                     {{ message.status + " " + message.lastStatusAt }}

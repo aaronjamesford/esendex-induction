@@ -1,5 +1,6 @@
 body {
-    background-color: #D8CEDB;
+    /*background-color: #D8CEDB;*/
+    background-color: #848484;
     padding: 0;
 }
 
@@ -7,7 +8,9 @@ body {
     background-color: #efefef;
     height: 600px;
     margin-top: 50px;
-    border: solid 1px #d0d0d0;
+    /*border: solid 1px #d0d0d0;*/
+    border: solid 1px #a1a1a1;
+    
 }
 
 .sidebar {

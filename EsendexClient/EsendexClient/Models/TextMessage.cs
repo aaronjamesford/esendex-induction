@@ -41,9 +41,12 @@ namespace EsendexClient.Models
         public string Username { get; set; }
     }
 
+    [XmlRoot("messagebody", Namespace = "http://api.esendex.com/ns/")]
     public class MessageBody
     {
         public string Uri { get; set; }
+        public string BodyText { get; set; }
+        public string CharacterSet { get; set; }
     }
 
     public class Participant
