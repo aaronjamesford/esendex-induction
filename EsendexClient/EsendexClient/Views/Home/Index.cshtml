@@ -43,15 +43,16 @@
                         </div>
                     </div>
                     <div class="send-message-panel container-fluid">
-                        <div class="row">
-                            <div class="col-sm-8">
-                                <input type="textarea" style="width: 100%" />
-                            </div>
-                            <div class="col-sm-4">
-                                <a href="#" class="btn btn-primary" style="width: 100%">Send</a>
-                            </div>
+                        <div class="row" ng-show="activeConversation !== undefined">
+                            <form ng-submit="sendMessage(activeConversation.participant)">
+                                <div class="col-sm-8">
+                                    <input type="text" id="body-text" ng-model="body" style="width: 100%" />
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="submit" id="body-submit" class="btn btn-primary" style="width: 100%" value="Send" />
+                                </div>
+                            </form>
                         </div>
-
                     </div>
                 </div>
             </div>

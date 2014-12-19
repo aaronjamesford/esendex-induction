@@ -9,12 +9,49 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using EsendexClient.Models;
 using RestSharp;
+using RestSharp.Serializers;
 
 namespace EsendexClient.Controllers
 {
+    [SerializeAs(Name = "messages")]
+    public class Messages
+    {
+        [SerializeAs(Name = "accountreference")]
+        public string AccountReference { get; set; }
+
+        [SerializeAs(Name = "message")]
+        public OutboundMessage Message { get; set; }
+    }
+
     public class ConversationController : ApiController
     {
         private string _credentials = "user:pass";
+        private string _accountReference = "EX0000001";
+        private string _apiDomain = "http://api.dev.esendex.com";
+
+        public async Task<IHttpActionResult> Post([FromBody] OutboundMessage message)
+        {
+            var submitResponse = await DispatchMessageAsync(message);
+
+            if (submitResponse.ResponseStatus != ResponseStatus.Completed || submitResponse.StatusCode != HttpStatusCode.OK)
+            {
+                return InternalServerError();
+            }
+
+            return Ok();
+        }
+
+        private async Task<IRestResponse> DispatchMessageAsync(OutboundMessage message)
+        {
+            var client = new RestClient(_apiDomain);
+            var request = new RestRequest("/v1.0/messagedispatcher", Method.POST);
+            request.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_credentials)));
+            request.RequestFormat = DataFormat.Xml;
+
+            request.AddBody(new Messages { AccountReference = _accountReference, Message = message });
+
+            return await client.ExecutePostTaskAsync(request).ContinueWith(res => res.Result);
+        }
 
         [ResponseType(typeof (IEnumerable<Conversation>))]
         public async Task<IHttpActionResult> Get()
@@ -107,7 +144,7 @@ namespace EsendexClient.Controllers
 
         private async Task<IRestResponse<MessageHeaderController.MessageHeadersResponse>> GetHeadersAsync()
         {
-            var client = new RestClient("http://api.esendex.com");
+            var client = new RestClient(_apiDomain);
             var request = new RestRequest("/v1.0/messageheaders", Method.GET);
             request.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_credentials)));
 
@@ -116,7 +153,7 @@ namespace EsendexClient.Controllers
 
         private async Task<IRestResponse<MessageHeaderController.MessageHeadersResponse>> GetInboundHeadersAsync()
         {
-            var client = new RestClient("http://api.esendex.com");
+            var client = new RestClient(_apiDomain);
             var request = new RestRequest("/v1.0/inbox/messages", Method.GET);
             request.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_credentials)));
 
@@ -125,7 +162,7 @@ namespace EsendexClient.Controllers
 
         private async Task<IRestResponse<MessageHeaderController.MessageHeadersResponse>> GetHeadersAsync(string participant)
         {
-            var client = new RestClient("http://api.esendex.com");
+            var client = new RestClient(_apiDomain);
             var request = new RestRequest("/v1.0/messageheaders?to=" + participant, Method.GET);
             request.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_credentials)));
 
@@ -135,7 +172,7 @@ namespace EsendexClient.Controllers
 
         private async Task<IRestResponse<MessageHeaderController.MessageHeadersResponse>> GetInboundHeadersAsync(int n)
         {
-            var client = new RestClient("http://api.esendex.com");
+            var client = new RestClient(_apiDomain);
             var request = new RestRequest("/v1.0/inbox/messages?count=" + n, Method.GET);
             request.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_credentials)));
 
@@ -144,12 +181,21 @@ namespace EsendexClient.Controllers
 
         private async Task<IRestResponse<MessageBody>> GetBodyAsync(MessageHeader header)
         {
-            var client = new RestClient("http://api.esendex.com");
+            var client = new RestClient(_apiDomain);
             var request = new RestRequest("/v1.0/messageheaders/" + header.Id + "/body", Method.GET);
             request.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_credentials)));
 
             return await client.ExecuteGetTaskAsync<MessageBody>(request).ContinueWith(res => res.Result);
         }
+    }
+
+    public class OutboundMessage
+    {
+        [SerializeAs(Name = "to")]
+        public string To { get; set; }
+
+        [SerializeAs(Name = "body")]
+        public string Body { get; set; }
     }
 
     public static class CollectionExtensions
