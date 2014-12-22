@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Web.SessionState;
 using EsendexApi;
 using EsendexApi.Clients;
 using EsendexApi.Structures;
@@ -12,15 +14,16 @@ using EsendexClient.Models;
 
 namespace EsendexClient.Controllers
 {
-    public class ConversationController : ApiController
+    public class ConversationController : ApiController, IRequiresSessionState
     {
+        private HttpSessionState Session { get { return HttpContext.Current.Session; } }
+        private EsendexCredentials Credentials { get { return Session["credentials"] as EsendexCredentials; } }
+
         private string _apiDomain = "http://api.dev.esendex.com";
-        private string _password = "badger";
-        private string _username = "aaron.ford@esendex.com";
 
         public async Task<IHttpActionResult> Post([FromBody] OutboundMessage message)
         {
-            var restFactory = new RestFactory(_apiDomain, _username, _password);
+            var restFactory = new RestFactory(_apiDomain, Credentials.Username, Credentials.Password);
             var accountDetailses = (await new AccountClient(restFactory).GetAccounts());
             var accountRef = accountDetailses.Single().Reference;
             var submitResponse = await new MessageDispatcherClient(restFactory).SendMessage(accountRef, message);
@@ -31,7 +34,7 @@ namespace EsendexClient.Controllers
         [ResponseType(typeof (IEnumerable<ConversationSummary>))]
         public async Task<IHttpActionResult> Get()
         {
-            var restFactory = new RestFactory(_apiDomain, _username, _password);
+            var restFactory = new RestFactory(_apiDomain, Credentials.Username, Credentials.Password);
             var outgoingMessages = await new MessageHeadersClient(restFactory).GetMessageHeaders();
             var incomingMessages = await new InboxClient(restFactory).GetInboxMessages();
 
@@ -60,7 +63,7 @@ namespace EsendexClient.Controllers
         [ResponseType(typeof(IEnumerable<ConversationItem>))]
         public async Task<IHttpActionResult> Get(string participant)
         {
-            var restFactory = new RestFactory(_apiDomain, _username, _password);
+            var restFactory = new RestFactory(_apiDomain, Credentials.Username, Credentials.Password);
             var messageHeadersClient = new MessageHeadersClient(restFactory);
 
             var outgoingMessages = await messageHeadersClient.GetMessageHeaders(participant);

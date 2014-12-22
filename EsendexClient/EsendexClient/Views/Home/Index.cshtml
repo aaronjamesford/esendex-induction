@@ -1,64 +1,45 @@
-<html ng-app="esendex-mail">
-    <head>
-        <title>Aaron's Esendex Mailbox</title>
-    
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" type="text/css" media="all" />
-        <link rel="stylesheet" href="Content/mail.css" type="text/css" media="all" />
-        <script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.3/angular.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="Scripts/mail.js" type="text/javascript" charset="utf-8"></script>
-    </head>
-    <body>
-        <div class="container main-container" ng-controller="MailboxController" data-ng-init="getConversations()">
-            <div class="row">
-                <div class="col-sm-4 sidebar">
-                    <div class="panel-header">Conversations<!--{{ accountReference + " (" + accountVmn + ")"}}--></div>
-                    <div class="message-list">
-                        <ul class="nav nav-sidebar small">
-                            <li ng-repeat="conversation in conversations" ng:class="{active: conversation.active}">
-                                <a href="" ng-click="setActiveConversation(conversation.participant)">
-                                    <p><strong>{{ conversation.participant }}</strong></p>
-                                    <p class="message-preview">{{ conversation.summary }}</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+﻿@model EsendexClient.Models.EsendexCredentials
+<html>
+<head>
+    <title>Aaron's Esendex Mailbox</title>
 
-                <div class="col-sm-8 message-panel">
-
-                    <div class="panel-header">{{ activeConversation.participant }}</div>
-                    <div class="conversation-panel container-fluid">
-                        <div class="row" ng-repeat="message in activeConversation" draw-conversation-directive>
-                            <div class="col-sm-5" ng-class="{ 'col-sm-offset-7' : message.direction == 'Outbound'}">
-                                <div class="message" ng-class="{ 'incoming' : message.direction == 'Inbound', 'outgoing' : message.direction == 'Outbound' }">
-                                    <span class="glyphicon glyphicon-warning-sign" data-toggle="tooltip" data-placement="left" title="This message failed to send" ng-show="message.status == 'Failed'">&nbsp;</span>
-                                    {{ message.body }}
-                                </div>
-                                <div class="message-status pull-right">
-                                    {{ message.status + " " + message.lastStatusAt }}
-                                </div>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="/Content/mail.css" type="text/css" media="all" />
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.3/angular.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/Scripts/mail.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4" style="padding: 0">
+                <div class="main-container" style="height: auto">
+                    <div class="panel-header">Login with your Esendex credentials</div>
+                    <div style="padding: 10px">
+                        @using (Html.BeginForm())
+                        {
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                @Html.TextBoxFor(model => model.Username, new Dictionary<string, object> { { "class", "form-control" }, { "id", "username" } })
                             </div>
-                        </div>
-                    </div>
-                    <div class="send-message-panel container-fluid">
-                        <div class="row" ng-show="activeConversation !== undefined">
-                            <form ng-submit="sendMessage(activeConversation.participant)">
-                                <div class="col-sm-8">
-                                    <input type="text" id="body-text" ng-model="body" style="width: 100%" />
-                                </div>
-                                <div class="col-sm-4">
-                                    <input type="submit" id="body-submit" class="btn btn-primary" style="width: 100%" value="Send" />
-                                </div>
-                            </form>
-                        </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                @Html.PasswordFor(model => model.Password, new Dictionary<string, object> { {"class", "form-control"}, {"id", "password"} })
+                            </div>
+
+                            <div class="form-group">
+                                <input type="submit" class="btn btn-default"/>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
         </div>
-    </body>
-    <script type="text/javascript" charset="utf-8">
-        
-    </script>
+    </div>
+</body>
+<script type="text/javascript" charset="utf-8">
+
+</script>
 </html>
