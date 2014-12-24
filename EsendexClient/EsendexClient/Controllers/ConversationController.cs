@@ -19,7 +19,7 @@ namespace EsendexClient.Controllers
         private HttpSessionState Session { get { return HttpContext.Current.Session; } }
         private EsendexCredentials Credentials { get { return Session["credentials"] as EsendexCredentials; } }
 
-        private string _apiDomain = "http://api.dev.esendex.com";
+        private string _apiDomain = "http://api.esendex.com";
 
         public async Task<IHttpActionResult> Post([FromBody] OutboundMessage message)
         {
