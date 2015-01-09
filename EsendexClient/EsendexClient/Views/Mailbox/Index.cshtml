@@ -13,7 +13,7 @@
     <div class="container main-container" ng-controller="MailboxController" data-ng-init="getConversations()">
         <div class="row">
             <div class="col-sm-4 sidebar">
-                <div class="panel-header">Conversations<!--{{ accountReference + " (" + accountVmn + ")"}}--></div>
+                <div class="panel-header"><a href=""><span class="glyphicon glyphicon-wrench account-dropdown-caret"></span></a>Conversations</div>
                 <div class="message-list">
                     <ul class="nav nav-sidebar small">
                         <li ng-repeat="conversation in conversations" ng:class="{active: conversation.active}">
@@ -31,7 +31,7 @@
             <div class="col-sm-8 message-panel">
 
                 <div class="panel-header">{{ activeConversation.participant }}</div>
-                <div class="conversation-panel container-fluid">
+                <div class="conversation-panel container-fluid" id="conversation">
                     <div class="row" ng-repeat="message in activeConversation" draw-conversation-directive>
                         <div class="col-sm-5" ng-class="{ 'col-sm-offset-7' : message.direction == 'Outbound'}">
                             <div class="message" ng-class="{ 'incoming' : message.direction == 'Inbound', 'outgoing' : message.direction == 'Outbound' }">

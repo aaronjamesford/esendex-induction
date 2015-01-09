@@ -15,6 +15,8 @@
         .directive("drawConversationDirective", function() {
             return function(scope) {
                 if (scope.$last) {
+                        $("#conversation").scrollTop($("#conversation")[0].scrollHeight);
+
                     $(function() {
                         $('[data-toggle="tooltip"]').tooltip();
                     });
