@@ -31,14 +31,6 @@
             $http.get("/api/Conversation")
                 .success(function(data) {
                     $scope.conversations = data;
-
-                    for (var i = 0; i < data.length; ++i) {
-                        data[i].messages = [
-                             { message: data[i].summary, direction: "outbound", lastEvent: "10/07/2014 16:28", status: "Delivered" }
-                        ];
-                    }
-
-                    //setTimeout($scope.getConversations, 5000);
                 }).error(function() {
                     alert("There was an error retreiving messages");
                 });
