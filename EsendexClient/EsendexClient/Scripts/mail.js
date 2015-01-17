@@ -87,7 +87,7 @@
             $('#body-text').attr('disabled', '').addClass('disabled');
             $('#body-submit').attr('disabled', '').addClass('disabled');
             
-            $http.post('/api/Conversation', { to: participant, body: this.body })
+            $http.post('/api/Message', { to: participant, body: this.body })
                 .success(function (data) {
                     $scope.setActiveConversation(participant);
                     $('#body-text').removeAttr('disabled').removeClass('disabled').text('').val('');

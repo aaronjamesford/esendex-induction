@@ -11,6 +11,7 @@ using EsendexApi;
 using EsendexApi.Clients;
 using EsendexApi.Structures;
 using EsendexClient.Models;
+using EsendexClient.Settings;
 
 namespace EsendexClient.Controllers
 {
@@ -19,22 +20,10 @@ namespace EsendexClient.Controllers
         private HttpSessionState Session { get { return HttpContext.Current.Session; } }
         private EsendexCredentials Credentials { get { return Session["credentials"] as EsendexCredentials; } }
 
-        private string _apiDomain = "http://api.esendex.com";
-
-        public async Task<IHttpActionResult> Post([FromBody] OutboundMessage message)
-        {
-            var restFactory = new RestFactory(_apiDomain, Credentials.Username, Credentials.Password);
-            var accountDetailses = (await new AccountClient(restFactory).GetAccounts());
-            var accountRef = accountDetailses.Single().Reference;
-            var submitResponse = await new MessageDispatcherClient(restFactory).SendMessage(accountRef, message);
-
-            return Ok(submitResponse);
-        }
-
         [ResponseType(typeof (IEnumerable<ConversationSummary>))]
         public async Task<IHttpActionResult> Get()
         {
-            var restFactory = new RestFactory(_apiDomain, Credentials.Username, Credentials.Password);
+            var restFactory = new RestFactory(AppSettings.EsendexEndpoint, Credentials.Username, Credentials.Password);
             var outgoingMessages = await new MessageHeadersClient(restFactory).GetMessageHeaders();
             var incomingMessages = await new InboxClient(restFactory).GetInboxMessages();
 
@@ -63,7 +52,7 @@ namespace EsendexClient.Controllers
         [ResponseType(typeof(IEnumerable<ConversationItem>))]
         public async Task<IHttpActionResult> Get(string participant)
         {
-            var restFactory = new RestFactory(_apiDomain, Credentials.Username, Credentials.Password);
+            var restFactory = new RestFactory(AppSettings.EsendexEndpoint, Credentials.Username, Credentials.Password);
             var messageHeadersClient = new MessageHeadersClient(restFactory);
 
             var outgoingMessages = await messageHeadersClient.GetMessageHeaders(participant);
