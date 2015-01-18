@@ -8,6 +8,7 @@ namespace EsendexClient.Hubs
     public class ConversationHub : Hub
     {
         private static readonly IDictionary<string, string> AcountIdToConnectionId = new ConcurrentDictionary<string, string>();
+        private static IHubContext ThisHub { get { return GlobalHost.ConnectionManager.GetHubContext<ConversationHub>(); } }
 
         public void Register(string accountId)
         {
@@ -18,12 +19,26 @@ namespace EsendexClient.Hubs
         {
             if (AcountIdToConnectionId.ContainsKey(message.AccountId))
             {
-                var thisHub = GlobalHost.ConnectionManager.GetHubContext<ConversationHub>();
-                dynamic client = thisHub.Clients.Client(AcountIdToConnectionId[message.AccountId]);
-
-                var messageModel = new ConversationItem(message);
-                client.onInboundMessage(messageModel);
+                OnInboundMessage(message);
+                OnUpdatedConversation(message);
             }
+        }
+
+        private static void OnUpdatedConversation(InboundMessage message)
+        {
+            var conversationModel = new ConversationSummary(message);
+            GetClient(message.AccountId).onUpdatedConversation(conversationModel);
+        }
+
+        private static void OnInboundMessage(InboundMessage value)
+        {
+            var messageModel = new ConversationItem(value);
+            GetClient(value.AccountId).onInboundMessage(messageModel);
+        }
+
+        private static dynamic GetClient(string accountId)
+        {
+            return ThisHub.Clients.Client(AcountIdToConnectionId[accountId]);
         }
     }
 }

@@ -14,6 +14,13 @@ namespace EsendexClient.Models
             Summary = latestMessage.Summary.Length > 50 ? latestMessage.Summary.Substring(0, 47) + "..." : latestMessage.Summary;
         }
 
+        public ConversationSummary(InboundMessage message)
+        {
+            Participant = message.From;
+            LastMessageAt = DateTime.UtcNow;
+            Summary = message.MessageText.Length > 50 ? message.MessageText.Substring(0, 47) + "..." : message.MessageText;
+        }
+
         [JsonProperty("participant")]
         public string Participant { get; set; }
 

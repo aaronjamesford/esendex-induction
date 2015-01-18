@@ -47,6 +47,25 @@
             }
         }
 
+        $scope.conversationHub.client.onUpdatedConversation = function (summary) {
+            var conversationFound = false;
+
+            for (var i = 0; i < $scope.conversations.length && !conversationFound; ++i) {
+                if ($scope.conversations[i].participant == summary.participant) {
+                    summary.active = $scope.conversations[i].active;
+                    $scope.conversations[i] = summary;
+                    
+                    conversationFound = true;
+                }
+            }
+
+            if (!conversationFound) {
+                $scope.conversations.push(summary);
+            }
+
+            $scope.$apply();
+        }
+
         $scope.registerInboundMessages = function () {
             $http.get("/api/EsendexAccount").success(function (account) {
                 $.connection.hub.url = "/signalr";
