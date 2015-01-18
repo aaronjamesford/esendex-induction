@@ -157,12 +157,15 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ConversationController.cs" />
+    <Compile Include="Controllers\EsendexAccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InboundMessageController.cs" />
     <Compile Include="Controllers\MailboxController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\ConversationHub.cs" />
     <Compile Include="Models\AccountInformation.cs" />
     <Compile Include="Models\ConversationItem.cs" />
     <Compile Include="Models\ConversationSummary.cs" />

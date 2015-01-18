@@ -1,73 +1,20 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
-using System.Web.Mvc;
 using System.Web.SessionState;
-using System.Xml;
-using System.Xml.Serialization;
 using EsendexApi;
 using EsendexApi.Clients;
 using EsendexApi.Structures;
 using EsendexClient.Models;
 using EsendexClient.Settings;
-using Microsoft.AspNet.SignalR;
 
 namespace EsendexClient.Controllers
 {
-    public class InboundMessageController : ApiController
-    {
-        public IHttpActionResult Post(InboundMessage value)
-        {
-            ConversationHub.InboundMessageReceived(value);
-            return Ok();
-        }
-    }
-
-    public class ConversationHub : Hub
-    {
-        private static readonly IDictionary<string, string> AcountIdToConnectionId = new ConcurrentDictionary<string, string>();
-
-        public void Register(string accountId)
-        {
-            AcountIdToConnectionId[accountId] = Context.ConnectionId;
-        }
-
-        public static void InboundMessageReceived(InboundMessage message)
-        {
-            if (AcountIdToConnectionId.ContainsKey(message.AccountId))
-            {
-                var thisHub = GlobalHost.ConnectionManager.GetHubContext<ConversationHub>();
-                var messageModel = new ConversationItem(message);
-                dynamic client = thisHub.Clients.All;//Clients.Client(AcountIdToConnectionId[message.AccountId]);
-                client.onInboundMessage(messageModel);
-            }
-        }
-    }
-
-    public class EsendexAccountController : ApiController, IRequiresSessionState
-    {
-
-        private HttpSessionState Session { get { return HttpContext.Current.Session; } }
-        private EsendexCredentials Credentials { get { return Session["credentials"] as EsendexCredentials; } }
-
-        [ResponseType(typeof (AccountInformation))]
-        public async Task<IHttpActionResult> Get()
-        {
-            var restFactory = new RestFactory(AppSettings.EsendexEndpoint, Credentials.Username, Credentials.Password);
-            var accounts = await new AccountClient(restFactory).GetAccounts();
-
-            return Json(new AccountInformation(accounts.First()));
-        }
-    }
-
     public class ConversationController : ApiController, IRequiresSessionState
     {
         private HttpSessionState Session { get { return HttpContext.Current.Session; } }
