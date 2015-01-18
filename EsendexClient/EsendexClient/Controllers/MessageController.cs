@@ -9,6 +9,7 @@ using EsendexApi.Clients;
 using EsendexApi.Structures;
 using EsendexClient.Models;
 using EsendexClient.Settings;
+using Newtonsoft.Json;
 
 namespace EsendexClient.Controllers
 {
@@ -23,7 +24,18 @@ namespace EsendexClient.Controllers
             var account = (await new AccountClient(restFactory).GetAccounts()).First();
             var submitResponse = await new MessageDispatcherClient(restFactory).SendMessage(account.Reference, message);
 
-            return Json(submitResponse);
+            return Json(new SubmittedMessage(submitResponse));
         }
+    }
+
+    public class SubmittedMessage
+    {
+        public SubmittedMessage(MessageHeader messageHeader)
+        {
+            MessageId = messageHeader.Id;
+        }
+
+        [JsonProperty("messageId")]
+        public string MessageId { get; set; }
     }
 }

@@ -164,7 +164,7 @@
                         status: "Submitted",
                         lastStatusAt: formatDate(now),
                         direction: "Outbound",
-                        id: data.id
+                        id: data.messageId
                     });
 
                     var summary = body.length > 50 ? body.substr(0, 57) + "..." : body;
