@@ -1,4 +1,4 @@
-(function() {
+(function () {
     var padNumber = function(n) {
         if (n < 10) {
             return "0" + n;
@@ -35,7 +35,27 @@
                     alert("There was an error retreiving messages");
                 });
         }
-            
+
+        $scope.conversationHub = $.connection.conversationHub;
+        $scope.conversationHub.client.onInboundMessage = function (message) {
+            if ($scope.activeConversation !== undefined && $scope.activeConversation.participant == message.from.phoneNumber) {
+                var d = new Date(message.lastStatusAt);
+                message.lastStatusAt = formatDate(d);
+
+                $scope.activeConversation.push(message);
+                $scope.$apply();
+            }
+        }
+
+        $scope.registerInboundMessages = function () {
+            $http.get("/api/EsendexAccount").success(function (account) {
+                $.connection.hub.url = "/signalr";
+                $.connection.hub.start().done(function () {
+                    $scope.conversationHub.server.register(account.id);
+                });
+            });
+        }
+
         $scope.setActiveConversation = function (participant) {
             if ($scope.activeConversation !== undefined) {
                 for (var idx = 0; idx < $scope.conversations.length; ++idx) {

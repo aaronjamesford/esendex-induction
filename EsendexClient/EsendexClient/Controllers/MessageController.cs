@@ -24,7 +24,7 @@ namespace EsendexClient.Controllers
             var accountRef = accountDetailses.Single().Reference;
             var submitResponse = await new MessageDispatcherClient(restFactory).SendMessage(accountRef, message);
 
-            return Ok(submitResponse);
+            return Json(submitResponse);
         }
     }
 }

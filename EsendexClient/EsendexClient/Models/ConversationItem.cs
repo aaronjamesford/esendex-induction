@@ -1,9 +1,16 @@
 using System;
 using EsendexApi.Structures;
 using EsendexClient.Controllers;
+using Newtonsoft.Json;
 
 namespace EsendexClient.Models
 {
+    public class Participant
+    {
+        [JsonProperty("phoneNumber")]
+        public string PhoneNumber { get; set; }
+    }
+
     public class ConversationItem
     {
         public ConversationItem(MessageHeader message)
@@ -17,12 +24,36 @@ namespace EsendexClient.Models
             Body = message.Body.BodyText;
         }
 
+        public ConversationItem(InboundMessage message)
+        {
+            From = new Participant { PhoneNumber = message.From };
+            To = new Participant { PhoneNumber = message.To };
+            LastStatusAt = DateTime.UtcNow;
+            Summary = message.MessageText.Length > 50 ? message.MessageText.Substring(0, 47) + "..." : message.MessageText;
+            Status = "Received";
+            Direction = "Inbound";
+            Body = message.MessageText;
+        }
+
+        [JsonProperty("status")]
         public string Status { get; set; }
+
+        [JsonProperty("lastStatusAt")]
         public DateTime LastStatusAt { get; set; }
+
+        [JsonProperty("to")]
         public Participant To { get; set; }
+
+        [JsonProperty("from")]
         public Participant From { get; set; }
+
+        [JsonProperty("summary")]
         public string Summary { get; set; }
+
+        [JsonProperty("direction")]
         public string Direction { get; set; }
+
+        [JsonProperty("body")]
         public string Body { get; set; }
     }
 }

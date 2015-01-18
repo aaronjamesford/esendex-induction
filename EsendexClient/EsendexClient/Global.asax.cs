@@ -7,9 +7,22 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.SessionState;
+using Microsoft.AspNet.SignalR;
+using Microsoft.Owin;
+using Owin;
 
+[assembly: OwinStartup(typeof(EsendexClient.Startup))]
 namespace EsendexClient
 {
+     public class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+            app.MapSignalR("/signalr", new HubConfiguration());
+        }
+
+    }
+
     public class MvcApplication : System.Web.HttpApplication
     {
         public override void Init()
