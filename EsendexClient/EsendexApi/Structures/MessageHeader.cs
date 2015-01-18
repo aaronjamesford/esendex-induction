@@ -1,5 +1,4 @@
 using System;
-using EsendexApi.Clients;
 using RestSharp.Deserializers;
 
 namespace EsendexApi.Structures

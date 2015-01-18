@@ -1,5 +1,3 @@
-using System.Xml.Serialization;
-
 namespace EsendexClient.Models
 {
     public class InboundMessage

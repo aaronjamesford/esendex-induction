@@ -162,6 +162,8 @@
     <Compile Include="Controllers\InboundMessageController.cs" />
     <Compile Include="Controllers\MailboxController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
+    <Compile Include="Controllers\MessageDeliveredController.cs" />
+    <Compile Include="Controllers\MessageFailedController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -171,6 +173,8 @@
     <Compile Include="Models\ConversationSummary.cs" />
     <Compile Include="Models\EsendexCredentials.cs" />
     <Compile Include="Models\InboundMessage.cs" />
+    <Compile Include="Models\MessageDelivered.cs" />
+    <Compile Include="Models\MessageFailed.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\AppSettings.cs" />
   </ItemGroup>

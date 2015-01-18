@@ -66,6 +66,34 @@
             $scope.$apply();
         }
 
+        $scope.conversationHub.client.onMessageFailed = function (message) {
+            if ($scope.activeConversation !== undefined) {
+                for (var i = 0; i < $scope.activeConversation.length; ++i) {
+                    if ($scope.activeConversation[i].id == message.messageId) {
+                        $scope.activeConversation[i].lastStatusAt = formatDate(new Date(message.occurredAt));
+                        $scope.activeConversation[i].status = "Failed";
+
+                        $scope.$apply();
+                        break;
+                    }
+                }
+            }
+        }
+
+        $scope.conversationHub.client.onMessageDelivered = function (message) {
+            if ($scope.activeConversation !== undefined) {
+                for (var i = 0; i < $scope.activeConversation.length; ++i) {
+                    if ($scope.activeConversation[i].id == message.messageId) {
+                        $scope.activeConversation[i].lastStatusAt = formatDate(new Date(message.occurredAt));
+                        $scope.activeConversation[i].status = "Delivered";
+
+                        $scope.$apply();
+                        break;
+                    }
+                }
+            }
+        }
+
         $scope.registerInboundMessages = function () {
             $http.get("/api/EsendexAccount").success(function (account) {
                 $.connection.hub.url = "/signalr";
@@ -95,6 +123,7 @@
 
                     $http.get("/api/conversation/?participant=" + participant)
                         .success(function (data) {
+                            console.log(data);
                             data.participant = participant;
 
                             for (var i = 0; i < data.length; ++i) {
@@ -120,7 +149,10 @@
             
             $http.post('/api/Message', { to: participant, body: this.body })
                 .success(function (data) {
-                    $scope.setActiveConversation(participant);
+                    var d = new Date(data.lastStatusAt);
+                    data.lastStatusAt = formatDate(d);
+                    $scope.activeConversation.push(data);
+
                     $('#body-text').removeAttr('disabled').removeClass('disabled').text('').val('');
                     $('#body-submit').removeAttr('disabled').removeClass('disabled');
                 });

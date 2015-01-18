@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using EsendexApi.Structures;
 using EsendexClient.Models;
 using Microsoft.AspNet.SignalR;
 
@@ -24,10 +25,50 @@ namespace EsendexClient.Hubs
             }
         }
 
+        public static void MessageFailed(MessageFailed value)
+        {
+            if (AcountIdToConnectionId.ContainsKey(value.AccountId))
+            {
+                OnMessageFailed(value);
+            }
+        }
+
+        public static void MessageDelivered(MessageDelivered value)
+        {
+            if (AcountIdToConnectionId.ContainsKey(value.AccountId))
+            {
+                OnMessageDelivered(value);
+            }
+        }
+
+        public static void ConversationUpdated(string accountId, MessageHeader message)
+        {
+            if (AcountIdToConnectionId.ContainsKey(accountId))
+            {
+                OnUpdatedConversation(accountId, message);
+            }
+        }
+
+        private static void OnMessageDelivered(MessageDelivered value)
+        {
+            GetClient(value.AccountId).onMessageDelivered(value);
+        }
+
+        private static void OnMessageFailed(MessageFailed value)
+        {
+            GetClient(value.AccountId).onMessageFailed(value);
+        }
+
         private static void OnUpdatedConversation(InboundMessage message)
         {
             var conversationModel = new ConversationSummary(message);
             GetClient(message.AccountId).onUpdatedConversation(conversationModel);
+        }
+
+        private static void OnUpdatedConversation(string accountId, MessageHeader message)
+        {
+            var conversationModel = new ConversationSummary(message);
+            GetClient(accountId).onUpdatedConversation(conversationModel);
         }
 
         private static void OnInboundMessage(InboundMessage value)

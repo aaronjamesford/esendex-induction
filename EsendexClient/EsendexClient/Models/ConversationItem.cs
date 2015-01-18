@@ -15,6 +15,7 @@ namespace EsendexClient.Models
     {
         public ConversationItem(MessageHeader message)
         {
+            Id = message.Id;
             From = new Participant {PhoneNumber = message.From.PhoneNumber};
             To = new Participant { PhoneNumber = message.To.PhoneNumber };
             LastStatusAt = ConversationController.GetLastStatus(message);
@@ -26,6 +27,7 @@ namespace EsendexClient.Models
 
         public ConversationItem(InboundMessage message)
         {
+            Id = message.MessageId;
             From = new Participant { PhoneNumber = message.From };
             To = new Participant { PhoneNumber = message.To };
             LastStatusAt = DateTime.UtcNow;
@@ -34,6 +36,9 @@ namespace EsendexClient.Models
             Direction = "Inbound";
             Body = message.MessageText;
         }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
 
         [JsonProperty("status")]
         public string Status { get; set; }

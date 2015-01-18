@@ -7,6 +7,7 @@ using System.Web.SessionState;
 using EsendexApi;
 using EsendexApi.Clients;
 using EsendexApi.Structures;
+using EsendexClient.Hubs;
 using EsendexClient.Models;
 using EsendexClient.Settings;
 
@@ -20,11 +21,11 @@ namespace EsendexClient.Controllers
         public async Task<IHttpActionResult> Post([FromBody] OutboundMessage message)
         {
             var restFactory = new RestFactory(AppSettings.EsendexEndpoint, Credentials.Username, Credentials.Password);
-            var accountDetailses = (await new AccountClient(restFactory).GetAccounts());
-            var accountRef = accountDetailses.Single().Reference;
-            var submitResponse = await new MessageDispatcherClient(restFactory).SendMessage(accountRef, message);
-
-            return Json(submitResponse);
+            var account = (await new AccountClient(restFactory).GetAccounts()).First();
+            var submitResponse = await new MessageDispatcherClient(restFactory).SendMessage(account.Reference, message);
+            
+            ConversationHub.ConversationUpdated(account.Id, submitResponse);
+            return Json(new ConversationItem(submitResponse));
         }
     }
 }
