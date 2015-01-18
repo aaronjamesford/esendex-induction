@@ -23,9 +23,13 @@ namespace EsendexClient.Controllers
             var restFactory = new RestFactory(AppSettings.EsendexEndpoint, Credentials.Username, Credentials.Password);
             var account = (await new AccountClient(restFactory).GetAccounts()).First();
             var submitResponse = await new MessageDispatcherClient(restFactory).SendMessage(account.Reference, message);
-            
-            ConversationHub.ConversationUpdated(account.Id, submitResponse);
-            return Json(new ConversationItem(submitResponse));
+
+            var messageHeadersClient = new MessageHeadersClient(restFactory);
+            var messageHeader = await messageHeadersClient.GetMessageHeader(submitResponse.Id);
+            messageHeader.Body = await messageHeadersClient.GetMessageBody(messageHeader.Id);
+
+            ConversationHub.ConversationUpdated(account.Id, messageHeader);
+            return Json(new ConversationItem(messageHeader));
         }
     }
 }

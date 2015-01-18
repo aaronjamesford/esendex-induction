@@ -30,6 +30,14 @@ namespace EsendexApi.Clients
                                .ToObservable();
         }
 
+        public IObservable<MessageHeader> GetMessageHeader(string id)
+        {
+            return _restFactory.CreateGetRequest("/v1.0/messageheaders/" + id)
+                               .ExecuteAsync<MessageHeader>()
+                               .ContinueWith(r => r.Result)
+                               .ToObservable();
+        }
+
         public IObservable<MessageBody> GetMessageBody(string id)
         {
             return _restFactory.CreateGetRequest("/v1.0/messageheaders/" + id + "/body")
