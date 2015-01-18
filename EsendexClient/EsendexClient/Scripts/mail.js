@@ -11,6 +11,10 @@
         return padNumber(d.getDate()) + "/" + padNumber(d.getMonth() + 1) + "/" + padNumber(d.getFullYear()) + " " + padNumber(d.getHours()) + ":" + padNumber(d.getMinutes());
     }
 
+    var toUtc = function (d) {
+        return padNumber(d.getFullYear()) + "-" + padNumber(d.getMonth() + 1) + "-" + padNumber(d.getDate()) + "T" + padNumber(d.getHours()) + ":" + padNumber(d.getMinutes()) + ":" + padNumber(d.getSeconds()) + ".000+00:00";
+    }
+
     var app = angular.module("esendex-mail", [])
         .directive("drawConversationDirective", function() {
             return function(scope) {
@@ -29,25 +33,14 @@
 
         $scope.getConversations = function() {
             $http.get("/api/Conversation")
-                .success(function(data) {
+                .success(function (data) {
                     $scope.conversations = data;
                 }).error(function() {
                     alert("There was an error retreiving messages");
                 });
         }
 
-        $scope.conversationHub = $.connection.conversationHub;
-        $scope.conversationHub.client.onInboundMessage = function (message) {
-            if ($scope.activeConversation !== undefined && $scope.activeConversation.participant == message.from.phoneNumber) {
-                var d = new Date(message.lastStatusAt);
-                message.lastStatusAt = formatDate(d);
-
-                $scope.activeConversation.push(message);
-                $scope.$apply();
-            }
-        }
-
-        $scope.conversationHub.client.onUpdatedConversation = function (summary) {
+        $scope.updateConversationSummary = function (summary) {
             var conversationFound = false;
 
             for (var i = 0; i < $scope.conversations.length && !conversationFound; ++i) {
@@ -62,7 +55,21 @@
             if (!conversationFound) {
                 $scope.conversations.push(summary);
             }
+        }
 
+        $scope.conversationHub = $.connection.conversationHub;
+        $scope.conversationHub.client.onInboundMessage = function (message) {
+            if ($scope.activeConversation !== undefined && $scope.activeConversation.participant == message.from.phoneNumber) {
+                var d = new Date(message.lastStatusAt);
+                message.lastStatusAt = formatDate(d);
+
+                $scope.activeConversation.push(message);
+                $scope.$apply();
+            }
+        }
+
+        $scope.conversationHub.client.onUpdatedConversation = function(message) {
+            $scope.updateConversationSummary(message);
             $scope.$apply();
         }
 
@@ -123,7 +130,6 @@
 
                     $http.get("/api/conversation/?participant=" + participant)
                         .success(function (data) {
-                            console.log(data);
                             data.participant = participant;
 
                             for (var i = 0; i < data.length; ++i) {
@@ -146,12 +152,29 @@
 
             $('#body-text').attr('disabled', '').addClass('disabled');
             $('#body-submit').attr('disabled', '').addClass('disabled');
-            
-            $http.post('/api/Message', { to: participant, body: this.body })
+
+            var body = this.body;
+
+            $http.post('/api/Message', { to: participant, body: body })
                 .success(function (data) {
-                    var d = new Date(data.lastStatusAt);
-                    data.lastStatusAt = formatDate(d);
-                    $scope.activeConversation.push(data);
+                    var now = new Date();
+
+                    $scope.activeConversation.push({
+                        body: body,
+                        status: "Submitted",
+                        lastStatusAt: formatDate(now),
+                        direction: "Outbound",
+                        id: data.id
+                    });
+
+                    var summary = body.length > 50 ? body.substr(0, 57) + "..." : body;
+
+                    $scope.updateConversationSummary({
+                        participant: participant,
+                        active: true,
+                        summary: summary,
+                        lastMessageAt: toUtc(now)
+                    });
 
                     $('#body-text').removeAttr('disabled').removeClass('disabled').text('').val('');
                     $('#body-submit').removeAttr('disabled').removeClass('disabled');

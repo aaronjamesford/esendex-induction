@@ -18,7 +18,7 @@
                 <div class="panel-header"><a href=""><span class="glyphicon glyphicon-wrench account-dropdown-caret"></span></a>Conversations</div>
                 <div class="message-list">
                     <ul class="nav nav-sidebar small">
-                        <li ng-repeat="conversation in conversations | orderBy: '-lastMessageAt'" ng:class="{active: conversation.active}">
+                        <li ng-repeat="conversation in conversations | orderBy: 'lastMessageAt':true" ng:class="{active: conversation.active}">
                             <a href="" ng-click="setActiveConversation(conversation.participant)">
                                 <p>
                                     <strong>{{ conversation.participant }}</strong>

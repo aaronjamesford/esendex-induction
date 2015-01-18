@@ -7,7 +7,6 @@ using System.Web.SessionState;
 using EsendexApi;
 using EsendexApi.Clients;
 using EsendexApi.Structures;
-using EsendexClient.Hubs;
 using EsendexClient.Models;
 using EsendexClient.Settings;
 
@@ -24,12 +23,7 @@ namespace EsendexClient.Controllers
             var account = (await new AccountClient(restFactory).GetAccounts()).First();
             var submitResponse = await new MessageDispatcherClient(restFactory).SendMessage(account.Reference, message);
 
-            var messageHeadersClient = new MessageHeadersClient(restFactory);
-            var messageHeader = await messageHeadersClient.GetMessageHeader(submitResponse.Id);
-            messageHeader.Body = await messageHeadersClient.GetMessageBody(messageHeader.Id);
-
-            ConversationHub.ConversationUpdated(account.Id, messageHeader);
-            return Json(new ConversationItem(messageHeader));
+            return Json(submitResponse);
         }
     }
 }
