@@ -13,12 +13,25 @@
 </head>
 <body>
     <div class="container main-container" ng-controller="MailboxController" data-ng-init="getConversations(); registerInboundMessages()">
+        <div class="dropdown" id="settings-dropdown">
+            <a id="settings-dropdown-button" href="" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-wrench account-dropdown-caret"></span>
+            </a>
+            <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="settings-dropdown-button">
+                <li><a href="" class="active">Use Rest</a></li>
+                <li><a href="">Use Soap</a></li>
+            </ul>
+        </div>
+
         <div class="row">
             <div class="col-sm-4 sidebar">
-                <div class="panel-header"><a href=""><span class="glyphicon glyphicon-wrench account-dropdown-caret"></span></a>Conversations</div>
+                <div class="panel-header">
+                    
+                    Conversations
+                </div>
                 <div class="message-list">
                     <ul class="nav nav-sidebar small">
-                        <li ng-repeat="conversation in conversations | orderBy: 'lastMessageAt':true" ng:class="{active: conversation.active}">
+                        <li ng-repeat="conversation in conversations | orderBy: 'lastMessageAt':true" ng-class="{active: conversation.active}">
                             <a href="" ng-click="setActiveConversation(conversation.participant)">
                                 <p>
                                     <strong>{{ conversation.participant }}</strong>
