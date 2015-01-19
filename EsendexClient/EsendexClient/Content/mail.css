@@ -37,11 +37,15 @@ body {
 #settings-dropdown {
     padding: 0;
     margin: 0;
-    line-height: 1em;
-    font-size: 1.5em;
     position: absolute;
     right: 10px;
     top: 0.5em;
+}
+
+#settings-dropdown-button {
+    line-height: 1em;
+    font-size: 1.5em;
+
 }
 
 #settings-dropdown .dropdown-menu {
@@ -158,12 +162,18 @@ body {
     border: solid 1px #a1a1a1;
 }
 
-.btn-primary:active {
+.btn-primary:visited {
+    background-color: #765285;
     border: solid 1px #a1a1a1;
 }
 
 .btn-primary:hover {
     background-color: #593e64;
+}
+
+.btn-primary:active {
+    background-color: #765285;
+    border: solid 1px #a1a1a1;
 }
 
 .btn-primary.disabled {
