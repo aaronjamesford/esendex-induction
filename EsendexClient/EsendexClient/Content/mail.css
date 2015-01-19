@@ -10,6 +10,7 @@ body {
     margin-top: 50px;
     /*border: solid 1px #d0d0d0;*/
     border: solid 1px #a1a1a1;
+    z-index: 1;
 }
 
 .sidebar {
@@ -31,27 +32,32 @@ body {
     color: #eeeeee;
     text-align: center;
     position: relative;
-    overflow: visible;
 }
 
 #settings-dropdown {
     padding: 0;
     margin: 0;
     position: absolute;
-    right: 10px;
-    top: 0.5em;
+    right: 0.5em;
+    bottom: 0.5em;
+    z-index: 99999;
 }
 
 #settings-dropdown-button {
+    background-color: #eeeeee;
     line-height: 1em;
     font-size: 1.5em;
+} 
 
+#settings-dropdown-button.clicked {
+    background-color: #c2c2c2;
 }
 
 #settings-dropdown .dropdown-menu {
     border-radius: 0;
     background-color: #eeeeee;
     padding: 0;
+    box-shadow: none;
 }
 
 #settings-dropdown .dropdown-menu a {
@@ -74,7 +80,7 @@ body {
     color: #eeeeee;
 }
 
-.message-list li {
+.message-list li:not(#settings-dropdown li) {
     height: 75px;
     width: 100%;
     background-color: #f5f5f5;
@@ -154,6 +160,10 @@ body {
 
 .send-message-panel .col-sm-3 input, .send-message-panel .col-sm-9 input {
     height: 3em;
+}
+
+.btn-default {
+    border-radius: 0;
 }
 
 .btn-primary {

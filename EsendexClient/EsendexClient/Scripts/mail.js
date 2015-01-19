@@ -30,6 +30,7 @@
     
     app.controller("MailboxController", function($scope, $http) {
         $scope.conversations = [];
+        $scope.apiType = "rest";
 
         $scope.getConversations = function() {
             $http.get("/api/Conversation")
@@ -66,6 +67,14 @@
                 $scope.activeConversation.push(message);
                 $scope.$apply();
             }
+        }
+
+        $scope.useRest = function() {
+            $scope.apiType = "rest";
+        }
+
+        $scope.useSoap = function () {
+            $scope.apiType = "soap";
         }
 
         $scope.conversationHub.client.onUpdatedConversation = function(message) {
@@ -179,6 +188,13 @@
                     $('#body-text').removeAttr('disabled').removeClass('disabled').text('').val('');
                     $('#body-submit').removeAttr('disabled').removeClass('disabled');
                 });
+
+            
         }
+    });
+
+    $(document).ready(function() {
+        $("#settings-dropdown").on("show.bs.dropdown", function() { $("#settings-dropdown-button").addClass("clicked"); });
+        $("#settings-dropdown").on("hide.bs.dropdown", function() { $("#settings-dropdown-button").removeClass("clicked"); });
     });
 })();
