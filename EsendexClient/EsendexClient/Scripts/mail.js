@@ -15,6 +15,19 @@
         return padNumber(d.getFullYear()) + "-" + padNumber(d.getMonth() + 1) + "-" + padNumber(d.getDate()) + "T" + padNumber(d.getHours()) + ":" + padNumber(d.getMinutes()) + ":" + padNumber(d.getSeconds()) + ".000+00:00";
     }
 
+    var apiControllers = {
+        rest : {
+            conversation: "/api/Conversation",
+            message: "/api/Message",
+            account: "/api/EsendexAccount"
+        },
+        soap : {
+            conversation: "/api/Conversation",
+            message: "/api/Message",
+            account: "/api/EsendexAccount"
+        }
+    }
+
     var app = angular.module("esendex-mail", [])
         .directive("drawConversationDirective", function() {
             return function(scope) {
@@ -33,7 +46,7 @@
         $scope.apiType = "rest";
 
         $scope.getConversations = function() {
-            $http.get("/api/Conversation")
+            $http.get(apiControllers[$scope.apiType].conversation)
                 .success(function (data) {
                     $scope.conversations = data;
                 }).error(function() {
@@ -111,7 +124,7 @@
         }
 
         $scope.registerInboundMessages = function () {
-            $http.get("/api/EsendexAccount").success(function (account) {
+            $http.get(apiControllers[$scope.apiType].account).success(function (account) {
                 $.connection.hub.url = "/signalr";
                 $.connection.hub.start().done(function () {
                     $scope.conversationHub.server.register(account.id);
@@ -137,7 +150,7 @@
                 if(conversation.participant == participant) {
                     $scope.conversations[idx].active = true;
 
-                    $http.get("/api/conversation/?participant=" + participant)
+                    $http.get(apiControllers[$scope.apiType].conversation + "?participant=" + participant)
                         .success(function (data) {
                             data.participant = participant;
 
@@ -164,7 +177,7 @@
 
             var body = this.body;
 
-            $http.post('/api/Message', { to: participant, body: body })
+            $http.post(apiControllers[$scope.apiType].message, { to: participant, body: body })
                 .success(function (data) {
                     var now = new Date();
 

@@ -55,8 +55,9 @@ body {
 
 #settings-dropdown .dropdown-menu {
     border-radius: 0;
+    border: 1px solid #848484;
     background-color: #eeeeee;
-    padding: 0;
+    /*padding: 0;*/
     box-shadow: none;
 }
 
@@ -65,15 +66,16 @@ body {
 }
 
 #settings-dropdown .dropdown-menu a.active {
-    background-color: #BEA7C7;
+    background-color: #618552;
+    color: #eeeeee;
 }
 
 #settings-dropdown .dropdown-menu a.active:hover {
-    background-color: #BEA7C7;
+    background-color: #618552;
 }
 
 #settings-dropdown .dropdown-menu a:hover {
-    background-color: #d6d6d6;
+    background-color: #e0e0e0;
 }
 
 .account-dropdown-caret {
