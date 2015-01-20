@@ -23,7 +23,7 @@
         },
         soap : {
             conversation: "/api/Conversation",
-            message: "/api/Message",
+            message: "/api/SoapMessage",
             account: "/api/EsendexAccount"
         }
     }

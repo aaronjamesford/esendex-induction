@@ -50,6 +50,8 @@
     <Reference Include="System.Reactive.PlatformServices">
       <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -67,6 +69,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GetRequest.cs" />
     <Compile Include="RestFactory.cs" />
+    <Compile Include="Service References\Soap.SendService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Soap\Clients\MessageDispatcherClient.cs" />
     <Compile Include="Structures\Account.cs" />
     <Compile Include="Structures\Accounts.cs" />
     <Compile Include="Structures\Participant.cs" />
@@ -75,10 +83,53 @@
     <Compile Include="Structures\MessageHeaders.cs" />
     <Compile Include="Structures\Messages.cs" />
     <Compile Include="Structures\OutboundMessage.cs" />
+    <Compile Include="Structures\SoapCredentials.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Service References\Soap.SendService\EsendexApi.Soap.SendService.GetMessageStatusResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Soap.SendService\EsendexApi.Soap.SendService.MessageStatusCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Soap.SendService\EsendexApi.Soap.SendService.SendMessageBatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Soap.SendService\EsendexApi.Soap.SendService.SendMessageFullResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Soap.SendService\EsendexApi.Soap.SendService.SendMessageMultipleRecipientsFullResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Soap.SendService\EsendexApi.Soap.SendService.SendMessageMultipleRecipientsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Soap.SendService\EsendexApi.Soap.SendService.SendMessageResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Soap.SendService\SendService.wsdl" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\Soap.SendService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\Soap.SendService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\Soap.SendService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\Soap.SendService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

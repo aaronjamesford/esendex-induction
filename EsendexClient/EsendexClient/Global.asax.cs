@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -27,6 +28,7 @@ namespace EsendexClient
     {
         public override void Init()
         {
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
             this.PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
             base.Init();
         }

@@ -12,7 +12,7 @@ using EsendexClient.Settings;
 
 namespace EsendexClient.Controllers
 {
-    public class MessageController : ApiController, IRequiresSessionState
+    public class SoapMessageController : ApiController, IRequiresSessionState
     {
         private HttpSessionState Session { get { return HttpContext.Current.Session; } }
         private EsendexCredentials Credentials { get { return Session["credentials"] as EsendexCredentials; } }
@@ -21,7 +21,9 @@ namespace EsendexClient.Controllers
         {
             var restFactory = new RestFactory(AppSettings.EsendexEndpoint, Credentials.Username, Credentials.Password);
             var account = (await new AccountClient(restFactory).GetAccounts()).First();
-            var submitResponse = await new MessageDispatcherClient(restFactory).SendMessage(account.Reference, message);
+
+            var soapCredentials = new SoapCredentials(Credentials.Username, Credentials.Password, account.Reference);
+            var submitResponse = await new EsendexApi.Soap.Clients.MessageDispatcherClient(soapCredentials).SendMessage(message);
 
             return Json(new SubmittedMessage(submitResponse));
         }
