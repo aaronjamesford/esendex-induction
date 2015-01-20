@@ -64,6 +64,7 @@
     <Compile Include="Clients\InboxClient.cs" />
     <Compile Include="Clients\MessageDispatcherClient.cs" />
     <Compile Include="Clients\MessageHeadersClient.cs" />
+    <Compile Include="FormPost\Clients\MessageDispatcherClient.cs" />
     <Compile Include="IRequest.cs" />
     <Compile Include="IRestFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -83,7 +84,7 @@
     <Compile Include="Structures\MessageHeaders.cs" />
     <Compile Include="Structures\Messages.cs" />
     <Compile Include="Structures\OutboundMessage.cs" />
-    <Compile Include="Structures\SoapCredentials.cs" />
+    <Compile Include="Structures\Credentials.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

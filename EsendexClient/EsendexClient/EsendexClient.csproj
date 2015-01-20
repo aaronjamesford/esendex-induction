@@ -158,6 +158,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ConversationController.cs" />
     <Compile Include="Controllers\EsendexAccountController.cs" />
+    <Compile Include="Controllers\FormPostMessageController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InboundMessageController.cs" />
     <Compile Include="Controllers\MailboxController.cs" />

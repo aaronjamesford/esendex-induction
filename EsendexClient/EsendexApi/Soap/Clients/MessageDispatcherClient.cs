@@ -8,10 +8,10 @@ namespace EsendexApi.Soap.Clients
 {
     public class MessageDispatcherClient
     {
-        private readonly SoapCredentials _credentials;
+        private readonly Credentials _credentials;
         private readonly SendServiceSoapClient _sendServiceClient;
 
-        public MessageDispatcherClient(SoapCredentials credentials)
+        public MessageDispatcherClient(Credentials credentials)
         {
             _credentials = credentials;
             _sendServiceClient = new SendServiceSoapClient();

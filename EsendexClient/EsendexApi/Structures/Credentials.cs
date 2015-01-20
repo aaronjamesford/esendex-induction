@@ -1,8 +1,8 @@
 namespace EsendexApi.Structures
 {
-    public class SoapCredentials
+    public class Credentials
     {
-        public SoapCredentials(string username, string password, string accountReference)
+        public Credentials(string username, string password, string accountReference)
         {
             Username = username;
             Password = password;

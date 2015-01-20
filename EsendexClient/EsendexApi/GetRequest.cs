@@ -26,6 +26,12 @@ namespace EsendexApi
             return _client.ExecuteGetTaskAsync<T>(_request)
                 .ContinueWith(r => r.Result.Data);
         }
+
+        public Task<string> ExecuteAsync()
+        {
+            return _client.ExecuteGetTaskAsync(_request)
+                .ContinueWith(r => r.Result.Content);
+        }
     }
 
     internal class PostRequest : IRequest
@@ -50,6 +56,12 @@ namespace EsendexApi
         {
             return _client.ExecutePostTaskAsync<T>(_request)
                 .ContinueWith(r => r.Result.Data);
+        }
+
+        public Task<string> ExecuteAsync()
+        {
+            return _client.ExecutePostTaskAsync(_request)
+                .ContinueWith(r => r.Result.Content);
         }
     }
 }

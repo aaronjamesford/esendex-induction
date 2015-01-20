@@ -25,6 +25,11 @@
             conversation: "/api/Conversation",
             message: "/api/SoapMessage",
             account: "/api/EsendexAccount"
+        },
+        formPost : {
+            conversation: "/api/Conversation",
+            message: "/api/FormPostMessage",
+            account: "/api/EsendexAccount"
         }
     }
 
@@ -88,6 +93,10 @@
 
         $scope.useSoap = function () {
             $scope.apiType = "soap";
+        }
+
+        $scope.useFormPost = function () {
+            $scope.apiType = "formPost";
         }
 
         $scope.conversationHub.client.onUpdatedConversation = function(message) {

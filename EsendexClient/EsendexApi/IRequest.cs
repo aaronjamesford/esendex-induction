@@ -6,5 +6,6 @@ namespace EsendexApi
     {
         IRequest AddBody(object obj);
         Task<T> ExecuteAsync<T>();
+        Task<string> ExecuteAsync();
     }
 }
