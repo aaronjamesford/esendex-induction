@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using EsendexApi.Structures;
 using EsendexClient.Models;
 using Microsoft.AspNet.SignalR;
@@ -8,17 +9,30 @@ namespace EsendexClient.Hubs
 {
     public class ConversationHub : Hub
     {
-        private static readonly IDictionary<string, string> AcountIdToConnectionId = new ConcurrentDictionary<string, string>();
+        private static readonly IDictionary<string, string> AccountIdToConnectionId = new ConcurrentDictionary<string, string>();
+        private static readonly IDictionary<string, string> ConnectionIdToAccountId = new ConcurrentDictionary<string, string>();
         private static IHubContext ThisHub { get { return GlobalHost.ConnectionManager.GetHubContext<ConversationHub>(); } }
 
         public void Register(string accountId)
         {
-            AcountIdToConnectionId[accountId] = Context.ConnectionId;
+            AccountIdToConnectionId[accountId] = Context.ConnectionId;
+            ConnectionIdToAccountId[Context.ConnectionId] = accountId;
+        }
+
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            if (ConnectionIdToAccountId.ContainsKey(Context.ConnectionId))
+            {
+                AccountIdToConnectionId.Remove(ConnectionIdToAccountId[Context.ConnectionId]);
+                ConnectionIdToAccountId.Remove(Context.ConnectionId);
+            }
+
+            return base.OnDisconnected(stopCalled);
         }
 
         public static void InboundMessageReceived(InboundMessage message)
         {
-            if (AcountIdToConnectionId.ContainsKey(message.AccountId))
+            if (AccountIdToConnectionId.ContainsKey(message.AccountId))
             {
                 OnInboundMessage(message);
                 OnUpdatedConversation(message);
@@ -27,7 +41,7 @@ namespace EsendexClient.Hubs
 
         public static void MessageFailed(MessageFailed value)
         {
-            if (AcountIdToConnectionId.ContainsKey(value.AccountId))
+            if (AccountIdToConnectionId.ContainsKey(value.AccountId))
             {
                 OnMessageFailed(value);
             }
@@ -35,7 +49,7 @@ namespace EsendexClient.Hubs
 
         public static void MessageDelivered(MessageDelivered value)
         {
-            if (AcountIdToConnectionId.ContainsKey(value.AccountId))
+            if (AccountIdToConnectionId.ContainsKey(value.AccountId))
             {
                 OnMessageDelivered(value);
             }
@@ -43,7 +57,7 @@ namespace EsendexClient.Hubs
 
         public static void ConversationUpdated(string accountId, MessageHeader message)
         {
-            if (AcountIdToConnectionId.ContainsKey(accountId))
+            if (AccountIdToConnectionId.ContainsKey(accountId))
             {
                 OnUpdatedConversation(accountId, message);
             }
@@ -79,7 +93,7 @@ namespace EsendexClient.Hubs
 
         private static dynamic GetClient(string accountId)
         {
-            return ThisHub.Clients.Client(AcountIdToConnectionId[accountId]);
+            return ThisHub.Clients.Client(AccountIdToConnectionId[accountId]);
         }
     }
 }
