@@ -55,6 +55,7 @@
                         <div class="col-sm-5" ng-class="{ 'col-sm-offset-7' : message.direction == 'Outbound'}">
                             <div class="message" ng-class="{ 'incoming' : message.direction == 'Inbound', 'outgoing' : message.direction == 'Outbound' }">
                                 <span class="glyphicon glyphicon-warning-sign" data-toggle="tooltip" data-placement="left" title="This message failed to send" ng-show="message.status == 'Failed'">&nbsp;</span>
+                                <span class="glyphicon glyphicon-time" data-toggle="tooltip" data-placement="left" title="This message is still being sent" ng-show="message.status == 'Submitted'">&nbsp;</span>
                                 {{ message.body }}
                             </div>
                             <div class="message-status pull-right">
