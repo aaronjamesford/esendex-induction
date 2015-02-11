@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Formatting;
+﻿using System.Collections.Generic;
+using System.Net.Http.Formatting;
 using System.Web.Http;
 using EsendexClient.Hubs;
 using EsendexClient.Models;
@@ -24,7 +25,13 @@ namespace EsendexClient.Controllers
                     break;
             }
 
-            return Ok(formData.ReadAsNameValueCollection());
+            var result = new Dictionary<string, string>();
+            foreach (var kv in formData)
+            {
+                result[kv.Key] = kv.Value;
+            }
+
+            return Ok(result);
         }
     }
 }
