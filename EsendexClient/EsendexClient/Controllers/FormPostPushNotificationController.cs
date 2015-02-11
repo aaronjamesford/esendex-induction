@@ -24,7 +24,7 @@ namespace EsendexClient.Controllers
                     break;
             }
 
-            return Ok();
+            return Ok(formData.ReadAsNameValueCollection());
         }
     }
 }
