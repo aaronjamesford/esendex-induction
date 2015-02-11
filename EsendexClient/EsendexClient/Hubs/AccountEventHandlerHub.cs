@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EsendexApi.Structures;
@@ -7,16 +7,16 @@ using Microsoft.AspNet.SignalR;
 
 namespace EsendexClient.Hubs
 {
-    public class ConversationHub : Hub
+    public class AccountEventHandlerHub : Hub
     {
-        private static readonly IDictionary<string, string> AccountIdToConnectionId = new ConcurrentDictionary<string, string>();
-        private static readonly IDictionary<string, string> ConnectionIdToAccountId = new ConcurrentDictionary<string, string>();
-        private static IHubContext ThisHub { get { return GlobalHost.ConnectionManager.GetHubContext<ConversationHub>(); } }
+        private static readonly IDictionary<string, string> AccountReferenceToConnectionId = new ConcurrentDictionary<string, string>();
+        private static readonly IDictionary<string, string> ConnectionIdToAccountReference = new ConcurrentDictionary<string, string>();
+        private static IHubContext ThisHub { get { return GlobalHost.ConnectionManager.GetHubContext<AccountEventHandlerHub>(); } }
 
-        public void Register(string accountId)
+        public void Register(string accountReference)
         {
-            AccountIdToConnectionId[accountId] = Context.ConnectionId;
-            ConnectionIdToAccountId[Context.ConnectionId] = accountId;
+            AccountReferenceToConnectionId[accountReference] = Context.ConnectionId;
+            ConnectionIdToAccountReference[Context.ConnectionId] = accountReference;
         }
 
         public override Task OnDisconnected(bool stopCalled)
@@ -28,16 +28,16 @@ namespace EsendexClient.Hubs
 
         public void Unregister()
         {
-            if (ConnectionIdToAccountId.ContainsKey(Context.ConnectionId))
+            if (ConnectionIdToAccountReference.ContainsKey(Context.ConnectionId))
             {
-                AccountIdToConnectionId.Remove(ConnectionIdToAccountId[Context.ConnectionId]);
-                ConnectionIdToAccountId.Remove(Context.ConnectionId);
+                AccountReferenceToConnectionId.Remove(ConnectionIdToAccountReference[Context.ConnectionId]);
+                ConnectionIdToAccountReference.Remove(Context.ConnectionId);
             }
         }
 
         public static void InboundMessageReceived(InboundMessage message)
         {
-            if (AccountIdToConnectionId.ContainsKey(message.AccountId))
+            if (AccountReferenceToConnectionId.ContainsKey(message.AccountReference))
             {
                 OnInboundMessage(message);
                 OnUpdatedConversation(message);
@@ -46,7 +46,7 @@ namespace EsendexClient.Hubs
 
         public static void MessageFailed(MessageFailed value)
         {
-            if (AccountIdToConnectionId.ContainsKey(value.AccountId))
+            if (AccountReferenceToConnectionId.ContainsKey(value.AccountId))
             {
                 OnMessageFailed(value);
             }
@@ -54,17 +54,9 @@ namespace EsendexClient.Hubs
 
         public static void MessageDelivered(MessageDelivered value)
         {
-            if (AccountIdToConnectionId.ContainsKey(value.AccountId))
+            if (AccountReferenceToConnectionId.ContainsKey(value.AccountReference))
             {
                 OnMessageDelivered(value);
-            }
-        }
-
-        public static void ConversationUpdated(string accountId, MessageHeader message)
-        {
-            if (AccountIdToConnectionId.ContainsKey(accountId))
-            {
-                OnUpdatedConversation(accountId, message);
             }
         }
 
@@ -98,7 +90,7 @@ namespace EsendexClient.Hubs
 
         private static dynamic GetClient(string accountId)
         {
-            return ThisHub.Clients.Client(AccountIdToConnectionId[accountId]);
+            return ThisHub.Clients.Client(AccountReferenceToConnectionId[accountId]);
         }
     }
 }

@@ -192,3 +192,23 @@ body {
     background-color: #c2a8cd;
     border: solid 1px #a1a1a1;
 }
+
+/**********************************************/
+
+.dropdown-submenu {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+    display: block;
+}
+
+.dropdown-submenu.pull-left {
+    float: none;
+}
+
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left: -80%;
+    bottom: 0;
+}

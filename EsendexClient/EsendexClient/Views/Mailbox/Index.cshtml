@@ -12,7 +12,7 @@
     <script src="/Scripts/mail.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
-    <div class="container main-container" ng-controller="MailboxController" data-ng-init="getConversations(); registerInboundMessages()">
+    <div class="container main-container" ng-controller="MailboxController" data-ng-init="getConversations(); startPushNotifications()">
         
 
         <div class="row">
@@ -44,6 +44,15 @@
                         <li><a href="" ng-class="{active: apiType == 'rest'}" ng-click="useRest()">Send SMS via Rest</a></li>
                         <li><a href="" ng-class="{active: apiType == 'soap'}" ng-click="useSoap()">Send SMS via Soap</a></li>
                         <li><a href="" ng-class="{active: apiType == 'formPost'}" ng-click="useFormPost()">Send SMS via FormPost</a></li>
+                        <li class="dropdown-submenu pull-left">
+                            <a tabindex="-1" href="">Push Notifications</a>
+                            <ul class="dropdown-menu">
+                                <li><a tabindex="-1" href="" ng-class="{active: pushType == 'rest'}" ng-click="registerRestPushNotifications()">Normal (Rest)</a></li>
+                                <li><a href="" ng-class="{active: pushType == 'formPost'}" ng-click="registerAccountEventHandlerPushNotifications()">Acct EventHandler</a></li>
+                            </ul>
+                        </li>
+                        <!--<li><a href="" ng-class="{active: pushType == 'rest'}" ng-click="registerRestPushNotifications()">Rest Push Notifs</a></li>
+                            <li><a href="" ng-class="{active: pushType == 'formPost'}" ng-click="registerAccountEventHandlerPushNotifications()">FormPost Push Notifs</a></li>-->
                     </ul>
                 </div>
             </div>

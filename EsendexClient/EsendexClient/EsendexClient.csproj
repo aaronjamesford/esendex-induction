@@ -159,6 +159,7 @@
     <Compile Include="Controllers\ConversationController.cs" />
     <Compile Include="Controllers\EsendexAccountController.cs" />
     <Compile Include="Controllers\FormPostMessageController.cs" />
+    <Compile Include="Controllers\FormPostPushNotificationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InboundMessageController.cs" />
     <Compile Include="Controllers\MailboxController.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\AccountEventHandlerHub.cs" />
     <Compile Include="Hubs\ConversationHub.cs" />
     <Compile Include="Models\AccountInformation.cs" />
     <Compile Include="Models\ConversationItem.cs" />
