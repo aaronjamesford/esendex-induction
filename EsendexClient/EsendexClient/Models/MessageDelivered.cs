@@ -25,7 +25,7 @@ namespace EsendexClient.Models
             return new MessageDelivered
                 {
                     AccountReference = data.Get("account"),
-                    MessageId = data.Get("messageId"),
+                    MessageId = data.Get("id"),
                     OccurredAt = DateTime.Parse(data.Get("occurredAt"))
                 };
         }

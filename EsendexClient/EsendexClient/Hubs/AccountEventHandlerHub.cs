@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EsendexApi.Structures;
 using EsendexClient.Models;
 using Microsoft.AspNet.SignalR;
 
@@ -46,7 +45,7 @@ namespace EsendexClient.Hubs
 
         public static void MessageFailed(MessageFailed value)
         {
-            if (AccountReferenceToConnectionId.ContainsKey(value.AccountId))
+            if (AccountReferenceToConnectionId.ContainsKey(value.AccountReference))
             {
                 OnMessageFailed(value);
             }
@@ -62,30 +61,24 @@ namespace EsendexClient.Hubs
 
         private static void OnMessageDelivered(MessageDelivered value)
         {
-            GetClient(value.AccountId).onMessageDelivered(value);
+            GetClient(value.AccountReference).onMessageDelivered(value);
         }
 
         private static void OnMessageFailed(MessageFailed value)
         {
-            GetClient(value.AccountId).onMessageFailed(value);
+            GetClient(value.AccountReference).onMessageFailed(value);
         }
 
         private static void OnUpdatedConversation(InboundMessage message)
         {
             var conversationModel = new ConversationSummary(message);
-            GetClient(message.AccountId).onUpdatedConversation(conversationModel);
-        }
-
-        private static void OnUpdatedConversation(string accountId, MessageHeader message)
-        {
-            var conversationModel = new ConversationSummary(message);
-            GetClient(accountId).onUpdatedConversation(conversationModel);
+            GetClient(message.AccountReference).onUpdatedConversation(conversationModel);
         }
 
         private static void OnInboundMessage(InboundMessage value)
         {
             var messageModel = new ConversationItem(value);
-            GetClient(value.AccountId).onInboundMessage(messageModel);
+            GetClient(value.AccountReference).onInboundMessage(messageModel);
         }
 
         private static dynamic GetClient(string accountId)
