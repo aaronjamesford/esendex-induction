@@ -9,3 +9,9 @@ http://ajf-esendex.azurewebsites.net/api/InboundMessage
 http://ajf-esendex.azurewebsites.net/api/MessageDelivered
 http://ajf-esendex.azurewebsites.net/api/MessageFailed
 ```
+
+To enable the legacy Account EventHandler notifications, log into Echo and configure this endpoint for the latest FormPost push notifications.
+
+```
+http://ajf-esendex.azurewebsites.net/api/FormPostPushNotification
+```
