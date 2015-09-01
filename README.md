@@ -1,4 +1,4 @@
-esendex-induction
+Esendex Induction Application
 =================
 Small MVC app for induction task at Esendex. The demo is available [here](http://ajf-esendex.azurewebsites.net)
 
