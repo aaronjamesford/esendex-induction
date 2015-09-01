@@ -1,6 +1,6 @@
 Esendex Induction Application
 =================
-Small MVC app for induction task at Esendex. The demo is available [here](http://ajf-esendex.azurewebsites.net)
+This is a small MVC app for induction task at Esendex. The demo is available [here](http://ajf-esendex.azurewebsites.net)
 
 To enable push notifications, log into echo and configure these endpoints respectively
 
